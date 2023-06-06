@@ -1,34 +1,42 @@
+/**
+ *  @file utils.h (interface file)
+ *
+ *  @brief Interface for important program methods
+ *
+ *  @author Pedro Sobral & Ricardo Rodriguez
+ */
+
+#ifndef UTILS_H
+# define UTILS_H
+
 #include <stdlib.h>
 #include <string.h>
 
 /**
- * @brief Merges sub-sequences in a bitonic sequence.
+ * @brief Recursively sorts a bitonic sequence, sorting two smaller subsequences and merging them.
  * 
- * @param array Sequence containing the elements to be merged.
- * @param low Starting index of the sub-sequence to be merged.
- * @param sequence_size Number of elements in the sub-sequence to be merged.
+ * @param sequence  Sequence containing the elements to be sorted.
+ * @param low Starting index of the sub-array to be sorted.
+ * @param count Number of elements in the sub-array to be sorted.
  * @param direction The direction of sorting (1 for ascending, 0 for descending).
  */
-extern void bitonicMerge(int *sequence, int low, int sequence_size, int direction);
+void bitonic_sort_recursive(int *sequence, int low, int count, int direction);
 
 /**
- * @brief Recursively sorts a bitonic sequence.
+ * @brief Sort sequence using bitonic sort, according to the sequence size.
  * 
  * @param sequence Sequence containing the elements to be sorted.
- * @param low Starting index of the sub-sequence to be sorted.
- * @param sequence_size Number of elements in the sub-sequence to be sorted.
- * @param direction The direction of sorting (1 for ascending, 0 for descending).
+ * @param sequence_size Number of elements in the sequence.
  */
-extern void bitonicMergeSort(int *sequence, int low, int sequence_size, int direction);
+void bitonic_sort(int *sequence, int sequence_size);
 
 /**
  * @brief Validates if the sequence is sorted in ascending order.
  * 
  * @param sequence Sequence to be validated.
- * @param sequence_size Number of elements in the sequence.
- * @return EXIT_SUCCESS if the sequence is sorted, EXIT_FAILURE otherwise.
+ * @param numValues Number of elements in the sequence.
+ * @return 1 if the sequence is sorted, 0 otherwise.
  */
-extern int validation(int *sequence, int sequence_size);
-
+int validation(int *sequence, int numValues);
 
 #endif /* UTILS_H */

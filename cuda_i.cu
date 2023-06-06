@@ -1,3 +1,11 @@
+/**
+ * @file cuda_i.cu
+ * @authors Pedro Sobral, Ricardo Rodriguez
+ * @brief Bitonic sorting of a sequence, using CUDA library. In this case, the threads in a block thread process successive matrix rows
+ *
+ */
+
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -41,7 +49,7 @@ int main() {
         int num_subsequences = MATRIX_SUBSIZE / (1 << (iteration - 1));
 
         /* Launch sorting kernel, for each subsequence. With num_subsequence grids, each one having subsequence_size threads */
-        sortSubsequence<<<num_subsequences, subsequence_size>>>(device_sequence, subsequence_size);
+        sort_subsequence<<<num_subsequences, subsequence_size>>>(device_sequence, subsequence_size);
 
         /* Syncronize all sorting kernels to proceed to the merging phase */
         CHECK (cudaDeviceSynchronize());
@@ -49,7 +57,7 @@ int main() {
 
         /* Launch merging kernel, for each pair of previously sorted subsequences */
         for (int i = 0; i < num_subsequences / 2; i++) {
-            mergeSubsequences<<<num_subsequences, subsequence_size>>>(device_sequence + i * subsequence_size * 2, subsequence_size * 2);
+            merge_subsequences<<<num_subsequences, subsequence_size>>>(device_sequence + i * subsequence_size * 2, subsequence_size * 2);
         }
 
         /* Syncronize all sorting kernels to mark the end of the merging phase */
@@ -84,10 +92,11 @@ __global__ void sort_subsequence(int* sequence, int size) {
     /* CUDA Thread index */
     int thread_idx = blockIdx.x * blockDim.x + threadIdx.x;
 
-    /* Ver subarray da thread consoante a thread_idx */
+    /* Pointer to the start of the thread subsequence */
+    int *subsequence = sequence + thread_idx;
 
     /* Sort subsequence */
-    bitonic_sort(sequence, size);
+    bitonic_sort(subsequence, size);
 
 }
 
@@ -97,10 +106,11 @@ __global__ void merge_subsequences(int *sequence, int size) {
     /* CUDA Thread index */
     int thread_idx = blockIdx.x * blockDim.x + threadIdx.x;
 
-    /* Ver subarrays que vão formar um par */
+    /* Pointer to the start of the thread subsequences pair */
+    int *subsequence = sequence + thread_idx;
 
     /* Merge the two sorted subsequences */
-    merge_sorted_arrays();
+    bitonic_sort(subsequence, size);
 
 }
 
